@@ -15,16 +15,16 @@ export default function Search({ placeholder }: { placeholder: string }) {
   { /* ///falta arreglar el tema de la version de nextjs que sea 16 y otra opcion es sin el uso de next-auth
 
     const handleSearch = useDebouncedCallback((term) => {
-  console.log(`Searching... ${term}`);
- 
-  const params = new URLSearchParams(searchParams);
-  if (term) {
-    params.set('query', term);
-  } else {
-    params.delete('query');
-  }
-  replace(`${pathname}?${params.toString()}`);
-}, 300);
+      console.log(`Searching... ${term}`);
+    
+      const params = new URLSearchParams(searchParams);
+      if (term) {
+        params.set('query', term);
+      } else {
+        params.delete('query');
+      }
+      replace(`${pathname}?${params.toString()}`);
+    }, 300);
     */ }
 
   function handleSearch(term: string) {
