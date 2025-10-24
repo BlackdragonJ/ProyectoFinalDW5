@@ -1,5 +1,4 @@
 'use server';
-
 import { z } from 'zod';
 import postgres from 'postgres';
 import { revalidatePath } from 'next/cache';
@@ -11,8 +10,8 @@ const FormSchema = z.object({
     id: z.string(),
     customerId: z.string(),
     amount: z.coerce.number(),
-    date: z.string(),
     status: z.enum(['pending','paid']),
+    date: z.string(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -38,7 +37,6 @@ export async function createInvoice(formData: FormData){
             message: 'Database error: Failed to Create Invoice'
         };
     }
-
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
