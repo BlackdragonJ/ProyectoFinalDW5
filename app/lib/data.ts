@@ -12,6 +12,31 @@ import { notFound } from 'next/navigation';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+export type CustomerForEdit = {
+  id: string;
+  name: string;
+  email: string;
+  image_url: string | null;
+};
+
+export async function fetchCustomersById(id: string): Promise<CustomerForEdit | null> {
+  try{
+    const rows = await sql<CustomerForEdit[]>`
+      SELECT id, name, email, image_url
+      FROM customers
+      WHERE id = ${id};
+    `;
+
+  if (!rows || rows.length === 0){ return null; }
+
+  return rows[0];
+
+  }catch(error){
+    console.error(error);
+    throw new Error('Database Error: Failed to fetch customer');
+  }
+}
+
 export async function fetchRevenue() {
   try {
     // Artificially delay a response for demo purposes.

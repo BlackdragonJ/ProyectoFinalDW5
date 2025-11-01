@@ -8,6 +8,15 @@ import { AuthError } from 'next-auth';
  
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
+//esquema para Customers
+
+const CustomerSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email'),
+  image_url: z.string().optional(), 
+})
+
+//esquema para Invoices
 const FormSchema = z.object({
     id: z.string({
         invalid_type_error: 'Please select a customer',
@@ -29,6 +38,78 @@ export type State = {
     message?: string | null;
 };
 
+//funciones para Customers
+export async function createCustomer(formData: FormData){
+  const validatedFields = CustomerSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    image_url: formData.get('image_url'),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { name, email, image_url } = validatedFields.data;
+  const imageUrl = image_url && image_url.length > 0 ? image_url : null;
+
+  try {
+    await sql`
+      INSERT INTO customers (name, email, image_url)
+      VALUES (${name}, ${email}, ${imageUrl});
+    `;
+  } catch (error) {
+    console.error('Error creating customer:', error);
+    throw new Error('Database Error');
+  }
+
+  redirect('/dashboard/customers');
+}
+
+export async function updateCustomer(id: string, formData: FormData){
+  const validatedFields = CustomerSchema.safeParse({
+    name: formData.get('name'),
+    email: formData.get('email'),
+    image_url: formData.get('image_url') ?? null,
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { name, email, image_url } = validatedFields.data;
+  const imageUrl = image_url && image_url.length > 0 ? image_url : null;
+
+  try {
+    await sql`
+      UPDATE customers
+      SET name = ${name}, email = ${email}, image_url = ${imageUrl}
+      WHERE id = ${id};
+    `;
+  } catch (error) {
+    console.error('Error updating customer:', error);
+    throw new Error('Database Error: Failed to create Customer');
+  }
+
+  redirect('/dashboard/customers');
+}
+
+export async function deleteCustomer(id: string) {
+  try {
+    await sql`DELETE FROM customers WHERE id = ${id};`;
+  } catch (error) {
+    console.error('Error deleting customer:', error);
+    throw new Error('Database Error: Failed to delete Customer');
+  }
+
+  redirect('/dashboard/customers');
+}
+
+// funciones para Invoice
 export async function createInvoice(prevState: State, formData: FormData){
         const validatedFields = CreateInvoice.safeParse({
         customerId: formData.get('customerId'),

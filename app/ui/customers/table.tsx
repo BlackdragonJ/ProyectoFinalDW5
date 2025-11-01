@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import Search from '@/app/ui/search';
+import Link from 'next/link'
+import { deleteCustomer } from '@/app/lib/actions';
 import {
   CustomersTableType,
   FormattedCustomersTable,
@@ -98,17 +100,23 @@ export default async function CustomersTable({
                           <p>{customer.name}</p>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.email}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_invoices}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm">
-                        {customer.total_pending}
-                      </td>
-                      <td className="whitespace-nowrap bg-white px-4 py-5 text-sm group-first-of-type:rounded-md group-last-of-type:rounded-md">
-                        {customer.total_paid}
+                      <td className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Link
+                            href={`/dashboard/customers/${customer.id}/edit`}
+                            className="rounded border px-2 py-1 text-sm hover:bg-gray-50"
+                          >
+                            Edit
+                          </Link>
+                          <form action={deleteCustomer.bind(null, customer.id)}>
+                            <button
+                              type="submit"
+                              className="rounded border px-2 py-1 text-sm text-red-600 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </form>
+                        </div>
                       </td>
                     </tr>
                   ))}
