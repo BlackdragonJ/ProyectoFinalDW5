@@ -7,6 +7,7 @@ import {
   CustomersTableType,
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
+import { UpdateCustomer, DeleteCustomer } from '@/app/ui/customers/buttons';
 
 export default async function CustomersTable({
   customers,
@@ -82,8 +83,13 @@ export default async function CustomersTable({
                     <th scope="col" className="px-4 py-5 font-medium">
                       Total Paid
                     </th>
-                  </tr>
-                </thead>
+                  {/* nueva columna */}
+                  <th scope="col" className="py-5 pl-3 pr-4 text-right sm:pr-6">
+                    <span className="sr-only">Actions</span>
+                  </th>
+                </tr>
+              </thead>
+
 
                 <tbody className="divide-y divide-gray-200 text-gray-900">
                   {customers.map((customer) => (

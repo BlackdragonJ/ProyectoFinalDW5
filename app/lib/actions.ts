@@ -65,6 +65,7 @@ export async function createCustomer(formData: FormData){
     throw new Error('Database Error');
   }
 
+  revalidatePath('/dashboard/customers');
   redirect('/dashboard/customers');
 }
 
@@ -95,6 +96,7 @@ export async function updateCustomer(id: string, formData: FormData){
     throw new Error('Database Error: Failed to create Customer');
   }
 
+  revalidatePath('/dashboard/customers');
   redirect('/dashboard/customers');
 }
 
@@ -105,7 +107,8 @@ export async function deleteCustomer(id: string) {
     console.error('Error deleting customer:', error);
     throw new Error('Database Error: Failed to delete Customer');
   }
-
+  
+  revalidatePath('/dashboard/customers');
   redirect('/dashboard/customers');
 }
 
